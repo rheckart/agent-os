@@ -292,7 +292,7 @@ if [ "$OPENCODE" = true ]; then
     if [ "$IS_FROM_BASE" = true ]; then
         # Copy from base installation
         echo "  📂 Agents:"
-        for agent in context-fetcher date-checker file-creator git-workflow project-manager test-runner; do
+        for agent in context-fetcher date-checker file-creator git-workflow project-manager test-runner opencode-cli tool-manager; do
             if [ -f "$BASE_AGENT_OS/opencode/agents/${agent}.md" ]; then
                 copy_file "$BASE_AGENT_OS/opencode/agents/${agent}.md" "./.opencode/agents/${agent}.md" "false" "agents/${agent}.md"
             else
@@ -304,7 +304,7 @@ if [ "$OPENCODE" = true ]; then
         echo "  Downloading OpenCode files from GitHub..."
         echo ""
         echo "  📂 Agents:"
-        for agent in context-fetcher date-checker file-creator git-workflow project-manager test-runner; do
+        for agent in context-fetcher date-checker file-creator git-workflow project-manager test-runner opencode-cli tool-manager; do
             download_file "${BASE_URL}/opencode/agents/${agent}.md" \
                 "./.opencode/agents/${agent}.md" \
                 "false" \

@@ -146,9 +146,19 @@ fi
 # Handle OpenCode installation
 if [ "$OPENCODE" = true ]; then
     echo ""
-    echo "📥 Enabling OpenCode support..."
+    echo "📥 Downloading OpenCode agent templates..."
+    mkdir -p "$INSTALL_DIR/opencode/agents"
 
-    # Only update config to enable opencode
+    # Download agents to base installation for project use
+    echo "  📂 Agent templates:"
+    for agent in context-fetcher date-checker file-creator git-workflow project-manager test-runner opencode-cli tool-manager; do
+        download_file "${BASE_URL}/opencode/agents/${agent}.md" \
+            "$INSTALL_DIR/opencode/agents/${agent}.md" \
+            "false" \
+            "opencode/agents/${agent}.md"
+    done
+
+    # Update config to enable opencode
     if [ -f "$INSTALL_DIR/config.yml" ]; then
         sed -i.bak '/opencode:/,/enabled:/ s/enabled: false/enabled: true/' "$INSTALL_DIR/config.yml" && rm "$INSTALL_DIR/config.yml.bak"
         echo "  ✓ OpenCode enabled in configuration"
