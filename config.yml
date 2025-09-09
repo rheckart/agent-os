@@ -10,6 +10,8 @@ agents:
     enabled: false
   cursor:
     enabled: false
+  opencode:
+    enabled: false
 
 project_types:
   default:

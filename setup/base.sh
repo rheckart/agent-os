@@ -11,6 +11,7 @@ OVERWRITE_STANDARDS=false
 OVERWRITE_CONFIG=false
 CLAUDE_CODE=false
 CURSOR=false
+OPENCODE=false
 
 # Base URL for raw GitHub content
 BASE_URL="https://raw.githubusercontent.com/buildermethods/agent-os/main"
@@ -38,6 +39,10 @@ while [[ $# -gt 0 ]]; do
             CURSOR=true
             shift
             ;;
+        --opencode|opencode-cli)
+            OPENCODE=true
+            shift
+            ;;
         -h|--help)
             echo "Usage: $0 [OPTIONS]"
             echo ""
@@ -47,6 +52,7 @@ while [[ $# -gt 0 ]]; do
             echo "  --overwrite-config          Overwrite existing config.yml"
             echo "  --claude-code               Add Claude Code support"
             echo "  --cursor                    Add Cursor support"
+            echo "  --opencode                  Add OpenCode support"
             echo "  -h, --help                  Show this help message"
             echo ""
             exit 0
@@ -137,6 +143,18 @@ if [ "$CURSOR" = true ]; then
     fi
 fi
 
+# Handle OpenCode installation
+if [ "$OPENCODE" = true ]; then
+    echo ""
+    echo "📥 Enabling OpenCode support..."
+
+    # Only update config to enable opencode
+    if [ -f "$INSTALL_DIR/config.yml" ]; then
+        sed -i.bak '/opencode:/,/enabled:/ s/enabled: false/enabled: true/' "$INSTALL_DIR/config.yml" && rm "$INSTALL_DIR/config.yml.bak"
+        echo "  ✓ OpenCode enabled in configuration"
+    fi
+fi
+
 # Success message
 echo ""
 echo "✅ Agent OS base installation has been completed."
@@ -162,6 +180,10 @@ echo "   $INSTALL_DIR/setup/project.sh   - Project installation script"
 
 if [ "$CLAUDE_CODE" = true ]; then
     echo "   $INSTALL_DIR/claude-code/agents/ - Claude Code agent templates"
+fi
+
+if [ "$OPENCODE" = true ]; then
+    echo "   $INSTALL_DIR/opencode/agents/ - OpenCode agent templates"
 fi
 
 echo ""
