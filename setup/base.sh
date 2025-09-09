@@ -14,7 +14,7 @@ CURSOR=false
 OPENCODE=false
 
 # Base URL for raw GitHub content
-BASE_URL="https://raw.githubusercontent.com/buildermethods/agent-os/main"
+BASE_URL="https://raw.githubusercontent.com/rheckart/agent-os/main"
 
 # Parse command line arguments
 while [[ $# -gt 0 ]]; do

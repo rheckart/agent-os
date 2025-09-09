@@ -11,7 +11,6 @@ OVERWRITE_INSTRUCTIONS=false
 OVERWRITE_STANDARDS=false
 CLAUDE_CODE=false
 CURSOR=false
-OPENCODE=false
 PROJECT_TYPE=""
 
 # Parse command line arguments
@@ -37,10 +36,6 @@ while [[ $# -gt 0 ]]; do
             CURSOR=true
             shift
             ;;
-        --opencode|--opencode-cli)
-            OPENCODE=true
-            shift
-            ;;
         --project-type=*)
             PROJECT_TYPE="${1#*=}"
             shift
@@ -54,7 +49,6 @@ while [[ $# -gt 0 ]]; do
             echo "  --overwrite-standards       Overwrite existing standards files"
             echo "  --claude-code               Add Claude Code support"
             echo "  --cursor                    Add Cursor support"
-            echo "  --opencode                  Add OpenCode support"
             echo "  --project-type=TYPE         Use specific project type for installation"
             echo "  -h, --help                  Show this help message"
             echo ""
@@ -125,15 +119,6 @@ if [ "$IS_FROM_BASE" = true ]; then
            grep -A1 "cursor:" "$BASE_AGENT_OS/config.yml" | grep -q "enabled: true"; then
             CURSOR=true
             echo "  ✓ Auto-enabling Cursor support (from Agent OS config)"
-        fi
-    fi
-
-    if [ "$OPENCODE" = false ]; then
-        # Check if opencode is enabled in base config
-        if grep -q "opencode:" "$BASE_AGENT_OS/config.yml" && \
-           grep -A1 "opencode:" "$BASE_AGENT_OS/config.yml" | grep -q "enabled: true"; then
-            OPENCODE=true
-            echo "  ✓ Auto-enabling OpenCode support (from Agent OS config)"
         fi
     fi
 
@@ -283,36 +268,6 @@ if [ "$CURSOR" = true ]; then
     fi
 fi
 
-# Handle OpenCode installation for project
-if [ "$OPENCODE" = true ]; then
-    echo ""
-    echo "📥 Installing OpenCode support..."
-    mkdir -p "./.opencode/agent"
-
-    if [ "$IS_FROM_BASE" = true ]; then
-        # Copy from base installation
-        echo "  📂 Agents:"
-        for agent in context-fetcher date-checker file-creator git-workflow project-manager test-runner opencode-cli tool-manager; do
-            if [ -f "$BASE_AGENT_OS/opencode/agents/${agent}.md" ]; then
-                copy_file "$BASE_AGENT_OS/opencode/agents/${agent}.md" "./.opencode/agent/${agent}.md" "false" "agent/${agent}.md"
-            else
-                echo "  ⚠️  Warning: ${agent}.md not found in base installation"
-            fi
-        done
-    else
-        # Download from GitHub when using --no-base
-        echo "  Downloading OpenCode files from GitHub..."
-        echo ""
-        echo "  📂 Agents:"
-        for agent in context-fetcher date-checker file-creator git-workflow project-manager test-runner opencode-cli tool-manager; do
-            download_file "${BASE_URL}/opencode/agents/${agent}.md" \
-                "./.opencode/agent/${agent}.md" \
-                "false" \
-                "agent/${agent}.md"
-        done
-    fi
-fi
-
 # Success message
 echo ""
 echo "✅ Agent OS has been installed in your project ($PROJECT_NAME)!"
@@ -328,10 +283,6 @@ fi
 
 if [ "$CURSOR" = true ]; then
     echo "   .cursor/rules/             - Cursor command rules"
-fi
-
-if [ "$OPENCODE" = true ]; then
-    echo "   .opencode/agents/          - OpenCode specialized agents"
 fi
 
 echo ""
@@ -355,15 +306,6 @@ if [ "$CURSOR" = true ]; then
     echo "  @analyze-product - Set up the mission and roadmap for an existing product"
     echo "  @create-spec     - Create a spec for a new feature"
     echo "  @execute-tasks   - Build and ship code for a new feature"
-    echo ""
-fi
-
-if [ "$OPENCODE" = true ]; then
-    echo "OpenCode useage:"
-    echo "  /plan-product    - Set the mission & roadmap for a new product"
-    echo "  /analyze-product - Set up the mission and roadmap for an existing product"
-    echo "  /create-spec     - Create a spec for a new feature"
-    echo "  /execute-tasks   - Build and ship code for a new feature"
     echo ""
 fi
 
