@@ -86,7 +86,7 @@ if [ "$NO_BASE" = true ]; then
     IS_FROM_BASE=false
     echo "📦 Installing directly from GitHub (no base installation)"
     # Set BASE_URL for GitHub downloads
-    BASE_URL="https://raw.githubusercontent.com/buildermethods/agent-os/main"
+    BASE_URL="https://raw.githubusercontent.com/rheckart/agent-os/main"
     # Download and source functions when running from GitHub
     TEMP_FUNCTIONS="/tmp/agent-os-functions-$$.sh"
     curl -sSL "${BASE_URL}/setup/functions.sh" -o "$TEMP_FUNCTIONS"
@@ -287,14 +287,25 @@ fi
 if [ "$OPENCODE" = true ]; then
     echo ""
     echo "📥 Installing OpenCode support..."
+    mkdir -p "./.opencode/command"
     mkdir -p "./.opencode/agent"
 
     if [ "$IS_FROM_BASE" = true ]; then
         # Copy from base installation
+        echo "  📂 Commands:"
+        for cmd in plan-product create-spec create-tasks execute-tasks analyze-product; do
+            if [ -f "$BASE_AGENT_OS/commands/${cmd}.md" ]; then
+                copy_file "$BASE_AGENT_OS/commands/${cmd}.md" "./.opencode/command/${cmd}.md" "false" "command/${cmd}.md"
+            else
+                echo "  ⚠️  Warning: ${cmd}.md not found in base installation"
+            fi
+        done
+
+        echo ""
         echo "  📂 Agents:"
-        for agent in context-fetcher date-checker file-creator git-workflow project-manager test-runner opencode-cli tool-manager; do
-            if [ -f "$BASE_AGENT_OS/opencode/agents/${agent}.md" ]; then
-                copy_file "$BASE_AGENT_OS/opencode/agents/${agent}.md" "./.opencode/agent/${agent}.md" "false" "agent/${agent}.md"
+        for agent in context-fetcher date-checker file-creator git-workflow project-manager test-runner; do
+            if [ -f "$BASE_AGENT_OS/claude-code/agents/${agent}.md" ]; then
+                copy_file "$BASE_AGENT_OS/claude-code/agents/${agent}.md" "./.opencode/agent/${agent}.md" "false" "agent/${agent}.md"
             else
                 echo "  ⚠️  Warning: ${agent}.md not found in base installation"
             fi
@@ -303,9 +314,18 @@ if [ "$OPENCODE" = true ]; then
         # Download from GitHub when using --no-base
         echo "  Downloading OpenCode files from GitHub..."
         echo ""
+        echo "  📂 Commands:"
+        for cmd in plan-product create-spec create-tasks execute-tasks analyze-product; do
+            download_file "${BASE_URL}/commands/${cmd}.md" \
+                "./.opencode/command/${cmd}.md" \
+                "false" \
+                "command/${cmd}.md"
+        done
+
+        echo ""
         echo "  📂 Agents:"
-        for agent in context-fetcher date-checker file-creator git-workflow project-manager test-runner opencode-cli tool-manager; do
-            download_file "${BASE_URL}/opencode/agents/${agent}.md" \
+        for agent in context-fetcher date-checker file-creator git-workflow project-manager test-runner; do
+            download_file "${BASE_URL}/claude-code/agents/${agent}.md" \
                 "./.opencode/agent/${agent}.md" \
                 "false" \
                 "agent/${agent}.md"
