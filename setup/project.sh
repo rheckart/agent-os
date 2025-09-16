@@ -304,8 +304,8 @@ if [ "$OPENCODE" = true ]; then
         echo ""
         echo "  📂 Agents:"
         for agent in context-fetcher date-checker file-creator git-workflow project-manager test-runner; do
-            if [ -f "$BASE_AGENT_OS/claude-code/agents/${agent}.md" ]; then
-                copy_file "$BASE_AGENT_OS/claude-code/agents/${agent}.md" "./.opencode/agent/${agent}.md" "false" "agent/${agent}.md"
+            if [ -f "$BASE_AGENT_OS/opencode/agents/${agent}.md" ]; then
+                copy_file "$BASE_AGENT_OS/opencode/agents/${agent}.md" "./.opencode/agent/${agent}.md" "false" "agent/${agent}.md"
             else
                 echo "  ⚠️  Warning: ${agent}.md not found in base installation"
             fi
@@ -325,7 +325,7 @@ if [ "$OPENCODE" = true ]; then
         echo ""
         echo "  📂 Agents:"
         for agent in context-fetcher date-checker file-creator git-workflow project-manager test-runner; do
-            download_file "${BASE_URL}/claude-code/agents/${agent}.md" \
+            download_file "${BASE_URL}/opencode/agents/${agent}.md" \
                 "./.opencode/agent/${agent}.md" \
                 "false" \
                 "agent/${agent}.md"
